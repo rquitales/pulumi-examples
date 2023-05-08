@@ -1,4 +1,3 @@
-"use strict";
 import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 import * as random from "@pulumi/random";
@@ -25,6 +24,7 @@ const creds = new k8s.core.v1.Secret('rabbitmq-creds', {
 
 const appLabels = { app: "rabbitmq" };
 
+// Deploy a rabbitmq pod with a single container.
 const deployment = new k8s.apps.v1.Deployment("rabbitmq", {
     metadata: { labels: appLabels },
     spec: {
@@ -40,7 +40,7 @@ const deployment = new k8s.apps.v1.Deployment("rabbitmq", {
                         image: "rabbitmq:3-management",
                         name: "rabbitmq",
                         ports: [
-                            { containerPort: port },
+                            { containerPort: 15672 },
                         ],
                         env: [
                             {
@@ -69,6 +69,22 @@ const deployment = new k8s.apps.v1.Deployment("rabbitmq", {
     },
 })
 
+// Expose the rabbitmq deployment using a Kubernetes Service.
+const service = new k8s.core.v1.Service("rabbitmq", {
+    metadata: {
+        name: "rabbitmqsvc",
+        labels: appLabels,
+    },
+    spec: {
+        type: "ClusterIP",
+        ports: [{
+            port: port,
+            targetPort: 15672,
+        }],
+        selector: appLabels,
+    },
+});
 
 
 exports.deploymentName = deployment.metadata.name;
+exports.serviceName = service.metadata.name;

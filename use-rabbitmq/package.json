@@ -1,0 +1,12 @@
+{
+    "name": "use-rabbitmq",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^16"
+    },
+    "dependencies": {
+        "@pulumi/kubernetes": "^3.0.0",
+        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/rabbitmq": "^3.3.0"
+    }
+}

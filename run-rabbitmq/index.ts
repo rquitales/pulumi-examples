@@ -54,12 +54,7 @@ const deployment = new k8s.apps.v1.Deployment("rabbitmq", {
                             },
                             {
                                 name: "RABBITMQ_DEFAULT_PASS",
-                                valueFrom: {
-                                    secretKeyRef: {
-                                        name: secretName,
-                                        key: "password",
-                                    },
-                                },
+                                value: secretKey, // Do not get from secret, so that Deployment is recreated on password change.
                             },
                         ]
                     },
